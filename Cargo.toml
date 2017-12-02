@@ -5,6 +5,7 @@ authors = ["Nil Gradisnik <nil@layer.com>"]
 
 [dependencies]
 gio = "0.3"
+sourceview = "0.3"
 comrak = "0.2"
 
 [dependencies.gtk]

@@ -1,8 +1,11 @@
 // https://github.com/kivikakk/comrak
 
+use gtk::prelude::*;
+use gtk::TextBuffer;
+
 use comrak::{markdown_to_html, ComrakOptions};
 
-pub fn to_html(text: Option<String>) -> String {
+pub fn string_to_html(text: String) -> String {
     let options = ComrakOptions {
         hardbreaks: true,
         ext_table: true,
@@ -10,5 +13,12 @@ pub fn to_html(text: Option<String>) -> String {
         ..ComrakOptions::default()
     };
 
-    markdown_to_html(&text.unwrap(), &options)
+    markdown_to_html(&text, &options)
+}
+
+pub fn buffer_to_html(buffer: TextBuffer) -> String {
+    let (start, end) = buffer.get_bounds();
+    let text = buffer.get_text(&start, &end, false);
+
+    string_to_html(text.unwrap())
 }

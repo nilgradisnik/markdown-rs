@@ -28,6 +28,7 @@ Author: Nil Gradisnik
 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <requires lib="gtksourceview" version="3.0"/>
   <!-- interface-license-type mit -->
   <!-- interface-name markdown-rs -->
   <!-- interface-description Simple Markdown editor -->
@@ -67,9 +68,23 @@ Author: Nil Gradisnik
               <object class="GtkToolButton" id="render_button">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Open</property>
+                <property name="tooltip_text" translatable="yes">Render Markdown</property>
                 <property name="is_important">True</property>
                 <property name="label" translatable="yes">Render</property>
+                <property name="use_underline">True</property>
+                <property name="icon_name">view-refresh</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleToolButton" id="live_button">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Live Markdown</property>
+                <property name="label" translatable="yes">Live</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">media-playback-start</property>
               </object>
@@ -86,34 +101,38 @@ Author: Nil Gradisnik
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
+          <object class="GtkPaned">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="homogeneous">True</property>
+            <property name="can_focus">True</property>
             <child>
               <object class="GtkScrolledWindow" id="scrolled_window_left">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="shadow_type">in</property>
+                <property name="min_content_width">200</property>
                 <child>
-                  <object class="GtkTextView" id="text_view">
+                  <object class="GtkSourceView" id="text_view">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="wrap_mode">word</property>
-                    <property name="left_margin">4</property>
-                    <property name="right_margin">4</property>
-                    <property name="top_margin">4</property>
-                    <property name="bottom_margin">4</property>
-                    <property name="indent">2</property>
+                    <property name="left_margin">2</property>
+                    <property name="right_margin">2</property>
+                    <property name="top_margin">2</property>
+                    <property name="bottom_margin">2</property>
                     <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_WORD_COMPLETION | GTK_INPUT_HINT_NONE</property>
                     <property name="monospace">True</property>
+                    <property name="show_line_marks">True</property>
+                    <property name="tab_width">4</property>
+                    <property name="auto_indent">True</property>
+                    <property name="insert_spaces_instead_of_tabs">True</property>
+                    <property name="highlight_current_line">True</property>
+                    <property name="background_pattern">grid</property>
                   </object>
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
               </packing>
             </child>
             <child>
@@ -121,6 +140,7 @@ Author: Nil Gradisnik
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="shadow_type">in</property>
+                <property name="min_content_width">200</property>
                 <child>
                   <object class="GtkTextView" id="markdown_view">
                     <property name="visible">True</property>
@@ -137,9 +157,8 @@ Author: Nil Gradisnik
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
               </packing>
             </child>
           </object>
@@ -151,7 +170,7 @@ Author: Nil Gradisnik
         </child>
       </object>
     </child>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
   </object>
