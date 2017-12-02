@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.1 
+
+The MIT License (MIT)
+
+Copyright (c) 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+Author: Nil Gradisnik
+
+-->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <!-- interface-license-type mit -->
+  <!-- interface-name markdown-rs -->
+  <!-- interface-description Simple Markdown editor -->
+  <!-- interface-authors Nil Gradisnik -->
+  <object class="GtkApplicationWindow" id="window">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Markdown Rust</property>
+    <property name="window_position">center</property>
+    <property name="default_width">800</property>
+    <property name="default_height">480</property>
+    <property name="has_resize_grip">True</property>
+    <child>
+      <object class="GtkBox" id="v_box">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkToolbar" id="toolbar">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkToolButton" id="open_button">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Open</property>
+                <property name="is_important">True</property>
+                <property name="label" translatable="yes">Open</property>
+                <property name="use_underline">True</property>
+                <property name="icon_name">document-open</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="render_button">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Open</property>
+                <property name="is_important">True</property>
+                <property name="label" translatable="yes">Render</property>
+                <property name="use_underline">True</property>
+                <property name="icon_name">media-playback-start</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="homogeneous">True</property>
+            <child>
+              <object class="GtkScrolledWindow" id="scrolled_window_left">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkTextView" id="text_view">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="wrap_mode">word</property>
+                    <property name="left_margin">4</property>
+                    <property name="right_margin">4</property>
+                    <property name="top_margin">4</property>
+                    <property name="bottom_margin">4</property>
+                    <property name="indent">2</property>
+                    <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_WORD_COMPLETION | GTK_INPUT_HINT_NONE</property>
+                    <property name="monospace">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="scrolled_window_right">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkTextView" id="markdown_view">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="wrap_mode">word</property>
+                    <property name="left_margin">4</property>
+                    <property name="right_margin">4</property>
+                    <property name="top_margin">4</property>
+                    <property name="bottom_margin">4</property>
+                    <property name="indent">2</property>
+                    <property name="monospace">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+  </object>
+</interface>

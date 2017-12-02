@@ -1,0 +1,16 @@
+[package]
+name = "markdown-rs"
+version = "0.1.0"
+authors = ["Nil Gradisnik <nil@layer.com>"]
+
+[dependencies]
+gio = "0.3"
+comrak = "0.2"
+
+[dependencies.gtk]
+version = "0.3"
+default-features = false
+features = ["v3_22"]
+
+[dev-dependencies]
+clippy = "0.0.174"
