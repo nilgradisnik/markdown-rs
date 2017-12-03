@@ -44,7 +44,7 @@ macro_rules! clone {
 fn build_ui(application: &gtk::Application) {
     let glade_src = include_str!("gtk-ui.glade");
     let builder = Builder::new();
-    builder.add_from_string(glade_src).expect("Couldn't add from string");
+    builder.add_from_string(glade_src).expect("Builder couldn't add from string");
 
     let window: gtk::ApplicationWindow = builder.get_object("window").expect("Couldn't get window");
     window.set_application(application);
@@ -57,18 +57,21 @@ fn build_ui(application: &gtk::Application) {
     let text_view: sourceview::View = builder.get_object("text_view").unwrap();
     let markdown_view: gtk::TextView = builder.get_object("markdown_view").unwrap();
 
+    let file_chooser: gtk::FileChooserDialog = builder.get_object("file_chooser").unwrap();
+    file_chooser.add_buttons(&[
+        ("Open", gtk::ResponseType::Ok.into()),
+        ("Cancel", gtk::ResponseType::Cancel.into()),
+    ]);
+
     let about_dialog: gtk::AboutDialog = builder.get_object("about_dialog").unwrap();
     about_dialog.set_program_name(NAME);
     about_dialog.set_version(VERSION);
     about_dialog.set_authors(&[AUTHORS]);
     about_dialog.set_comments(DESCRIPTION);
 
-    open_button.connect_clicked(clone!(window, text_view, markdown_view => move |_| {
-        let file_chooser = gtk::FileChooserDialog::new(Some("Open File"), Some(&window), gtk::FileChooserAction::Open);
-        file_chooser.add_buttons(&[
-            ("Open", gtk::ResponseType::Ok.into()),
-            ("Cancel", gtk::ResponseType::Cancel.into()),
-        ]);
+    open_button.connect_clicked(clone!(text_view, markdown_view => move |_| {
+        file_chooser.show();
+
         if file_chooser.run() == gtk::ResponseType::Ok.into() {
             let filename = file_chooser.get_filename().expect("Couldn't get filename");
             let file = File::open(&filename).expect("Couldn't open file");
@@ -81,7 +84,7 @@ fn build_ui(application: &gtk::Application) {
             markdown_view.get_buffer().unwrap().set_text(&string_to_html(&contents));
         }
 
-        file_chooser.destroy();
+        file_chooser.hide();
     }));
 
     text_view.connect_key_release_event(clone!(text_view, markdown_view, live_button => move |_, _| {

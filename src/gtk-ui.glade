@@ -33,47 +33,13 @@ Author: Nil Gradisnik
   <!-- interface-name markdown-rs -->
   <!-- interface-description Simple Markdown editor -->
   <!-- interface-authors Nil Gradisnik -->
-  <object class="GtkAboutDialog" id="about_dialog">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="program_name">Markdown Rust</property>
-    <property name="version">0.1.0</property>
-    <property name="comments" translatable="yes">Fast, simple, distraction free Markdown editor.</property>
-    <property name="website">https://github.com/nilgradisnik/markdown-rs</property>
-    <property name="website_label" translatable="yes">markdown-rs</property>
-    <property name="authors">Nil Gradisnik &lt;nil.gradisnik@gmail.com&gt;</property>
-    <property name="logo_icon_name">text-x-generic</property>
-    <property name="license_type">mit-x11</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
+  <object class="GtkFileFilter" id="md_filter">
+    <mime-types>
+      <mime-type>text/markdown</mime-type>
+    </mime-types>
+    <patterns>
+      <pattern>*.md</pattern>
+    </patterns>
   </object>
   <object class="GtkApplicationWindow" id="window">
     <property name="can_focus">False</property>
@@ -237,6 +203,88 @@ Author: Nil Gradisnik
       </object>
     </child>
     <child type="titlebar">
+      <placeholder/>
+    </child>
+  </object>
+  <object class="GtkAboutDialog" id="about_dialog">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">window</property>
+    <property name="attached_to">window</property>
+    <property name="program_name">Markdown Rust</property>
+    <property name="version">0.1.0</property>
+    <property name="comments" translatable="yes">Fast, simple, distraction free Markdown editor.</property>
+    <property name="website">https://github.com/nilgradisnik/markdown-rs</property>
+    <property name="website_label" translatable="yes">markdown-rs</property>
+    <property name="authors">Nil Gradisnik &lt;nil.gradisnik@gmail.com&gt;</property>
+    <property name="logo_icon_name">text-x-generic</property>
+    <property name="license_type">mit-x11</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+  </object>
+  <object class="GtkFileChooserDialog" id="file_chooser">
+    <property name="can_focus">False</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">window</property>
+    <property name="attached_to">window</property>
+    <property name="filter">md_filter</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+    <child>
       <placeholder/>
     </child>
   </object>
