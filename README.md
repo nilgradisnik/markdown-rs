@@ -1,5 +1,5 @@
 # Markdown Rust
-A distraction free Markdown editor.
+Fast, simple, distraction free Markdown editor.
 
 ## Motivation
 There seem to be no simple, fast Markdown editors on Linux. Most of them are built with some version of Chrome and Javascript.

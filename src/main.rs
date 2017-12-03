@@ -18,6 +18,11 @@ use gtk::Builder;
 
 use markdown::{string_to_html, buffer_to_html};
 
+const NAME: &str = env!("CARGO_PKG_NAME");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
+const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
+
 // http://gtk-rs.org/tuto/closures
 macro_rules! clone {
     (@param _) => ( _ );
@@ -44,12 +49,19 @@ fn build_ui(application: &gtk::Application) {
     let window: gtk::ApplicationWindow = builder.get_object("window").expect("Couldn't get window");
     window.set_application(application);
 
-    let open_button: gtk::ToolButton = builder.get_object("open_button").expect("Couldn't get builder");
-    let render_button: gtk::ToolButton = builder.get_object("render_button").expect("Couldn't get builder");
-    let live_button: gtk::ToggleToolButton = builder.get_object("live_button").expect("Couldn't get builder");
+    let open_button: gtk::ToolButton = builder.get_object("open_button").unwrap();
+    let render_button: gtk::ToolButton = builder.get_object("render_button").unwrap();
+    let live_button: gtk::ToggleToolButton = builder.get_object("live_button").unwrap();
+    let about_button: gtk::ToolButton = builder.get_object("about_button").unwrap();
 
-    let text_view: sourceview::View = builder.get_object("text_view").expect("Couldn't get text_view");
-    let markdown_view: gtk::TextView = builder.get_object("markdown_view").expect("Couldn't get text_view");
+    let text_view: sourceview::View = builder.get_object("text_view").unwrap();
+    let markdown_view: gtk::TextView = builder.get_object("markdown_view").unwrap();
+
+    let about_dialog: gtk::AboutDialog = builder.get_object("about_dialog").unwrap();
+    about_dialog.set_program_name(NAME);
+    about_dialog.set_version(VERSION);
+    about_dialog.set_authors(&[AUTHORS]);
+    about_dialog.set_comments(DESCRIPTION);
 
     open_button.connect_clicked(clone!(window, text_view, markdown_view => move |_| {
         let file_chooser = gtk::FileChooserDialog::new(Some("Open File"), Some(&window), gtk::FileChooserAction::Open);
@@ -83,6 +95,15 @@ fn build_ui(application: &gtk::Application) {
     render_button.connect_clicked(clone!(text_view, markdown_view => move |_| {
         let buffer = text_view.get_buffer().unwrap();
         markdown_view.get_buffer().unwrap().set_text(&buffer_to_html(buffer));
+    }));
+
+    about_button.connect_clicked(clone!(about_dialog => move |_| {
+        about_dialog.show();
+    }));
+
+    about_dialog.connect_delete_event(clone!(about_dialog => move |_, _| {
+        about_dialog.hide();
+        Inhibit(true)
     }));
 
     window.connect_delete_event(clone!(window => move |_, _| {

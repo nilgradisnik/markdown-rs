@@ -2,6 +2,10 @@
 name = "markdown-rs"
 version = "0.1.0"
 authors = ["Nil Gradisnik <nil@layer.com>"]
+description = "Fast, simple, distraction free Markdown editor."
+repository = "@nilgradisnik/markdown-rs"
+readme = "README.md"
+license = "MIT"
 
 [dependencies]
 gio = "0.3"
