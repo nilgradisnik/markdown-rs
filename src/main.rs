@@ -78,7 +78,7 @@ fn build_ui(application: &gtk::Application) {
             let _ = reader.read_to_string(&mut contents);
 
             text_view.get_buffer().unwrap().set_text(&contents);
-            markdown_view.get_buffer().unwrap().set_text(&string_to_html(contents));
+            markdown_view.get_buffer().unwrap().set_text(&string_to_html(&contents));
         }
 
         file_chooser.destroy();
@@ -87,14 +87,14 @@ fn build_ui(application: &gtk::Application) {
     text_view.connect_key_release_event(clone!(text_view, markdown_view, live_button => move |_, _| {
         if live_button.get_active() {
             let buffer = text_view.get_buffer().unwrap();
-            markdown_view.get_buffer().unwrap().set_text(&buffer_to_html(buffer));
+            markdown_view.get_buffer().unwrap().set_text(&buffer_to_html(&buffer));
         }
         Inhibit(true)
     }));
 
     render_button.connect_clicked(clone!(text_view, markdown_view => move |_| {
         let buffer = text_view.get_buffer().unwrap();
-        markdown_view.get_buffer().unwrap().set_text(&buffer_to_html(buffer));
+        markdown_view.get_buffer().unwrap().set_text(&buffer_to_html(&buffer));
     }));
 
     about_button.connect_clicked(clone!(about_dialog => move |_| {

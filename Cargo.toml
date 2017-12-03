@@ -18,4 +18,4 @@ default-features = false
 features = ["v3_22"]
 
 [dev-dependencies]
-clippy = "0.0.174"
+clippy = "0.0.175"
