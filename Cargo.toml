@@ -11,6 +11,7 @@ license = "MIT"
 gio = "0.3"
 sourceview = "0.3"
 comrak = "0.2"
+horrorshow = "0.6"
 
 [dependencies.gtk]
 version = "0.3"

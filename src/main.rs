@@ -4,8 +4,10 @@ extern crate gio;
 extern crate gtk;
 extern crate sourceview;
 extern crate comrak;
+#[macro_use]
+extern crate horrorshow;
 
-mod markdown;
+mod preview;
 
 use std::env::args;
 use std::fs::File;
@@ -15,8 +17,7 @@ use std::io::BufReader;
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::Builder;
-
-use markdown::{string_to_html, buffer_to_html};
+use gtk::TextBuffer;
 
 const NAME: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -81,7 +82,7 @@ fn build_ui(application: &gtk::Application) {
             let _ = reader.read_to_string(&mut contents);
 
             text_view.get_buffer().unwrap().set_text(&contents);
-            markdown_view.get_buffer().unwrap().set_text(&string_to_html(&contents));
+            markdown_view.get_buffer().unwrap().set_text(&preview::render(&contents));
         }
 
         file_chooser.hide();
@@ -89,15 +90,15 @@ fn build_ui(application: &gtk::Application) {
 
     text_view.connect_key_release_event(clone!(text_view, markdown_view, live_button => move |_, _| {
         if live_button.get_active() {
-            let buffer = text_view.get_buffer().unwrap();
-            markdown_view.get_buffer().unwrap().set_text(&buffer_to_html(&buffer));
+            let markdown = buffer_to_string(text_view.get_buffer());
+            markdown_view.get_buffer().unwrap().set_text(&preview::render(&markdown));
         }
         Inhibit(true)
     }));
 
     render_button.connect_clicked(clone!(text_view, markdown_view => move |_| {
-        let buffer = text_view.get_buffer().unwrap();
-        markdown_view.get_buffer().unwrap().set_text(&buffer_to_html(&buffer));
+        let markdown = buffer_to_string(text_view.get_buffer());
+        markdown_view.get_buffer().unwrap().set_text(&preview::render(&markdown));
     }));
 
     about_button.connect_clicked(clone!(about_dialog => move |_| {
@@ -115,6 +116,14 @@ fn build_ui(application: &gtk::Application) {
     }));
 
     window.show_all();
+}
+
+fn buffer_to_string(buffer: Option<TextBuffer>) -> String {
+    let buffer = buffer.unwrap();
+    let (start, end) = buffer.get_bounds();
+    let text = buffer.get_text(&start, &end, false);
+
+    text.unwrap()
 }
 
 fn main() {
