@@ -7,7 +7,9 @@ extern crate comrak;
 #[macro_use]
 extern crate horrorshow;
 
+mod state;
 mod preview;
+mod utils;
 
 use std::env::args;
 use std::fs::File;
@@ -17,7 +19,8 @@ use std::io::BufReader;
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::Builder;
-use gtk::TextBuffer;
+
+use utils::{buffer_to_string, set_title};
 
 const NAME: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -50,6 +53,9 @@ fn build_ui(application: &gtk::Application) {
     let window: gtk::ApplicationWindow = builder.get_object("window").expect("Couldn't get window");
     window.set_application(application);
 
+    let header_bar: gtk::HeaderBar = builder.get_object("header_bar").unwrap();
+    header_bar.set_title(NAME);
+
     let open_button: gtk::ToolButton = builder.get_object("open_button").unwrap();
     let render_button: gtk::ToolButton = builder.get_object("render_button").unwrap();
     let live_button: gtk::ToggleToolButton = builder.get_object("live_button").unwrap();
@@ -70,7 +76,7 @@ fn build_ui(application: &gtk::Application) {
     about_dialog.set_authors(&[AUTHORS]);
     about_dialog.set_comments(DESCRIPTION);
 
-    open_button.connect_clicked(clone!(text_view, markdown_view => move |_| {
+    open_button.connect_clicked(clone!(header_bar, text_view, markdown_view => move |_| {
         file_chooser.show();
 
         if file_chooser.run() == gtk::ResponseType::Ok.into() {
@@ -81,6 +87,12 @@ fn build_ui(application: &gtk::Application) {
             let mut contents = String::new();
             let _ = reader.read_to_string(&mut contents);
 
+            set_title(&header_bar, &filename);
+            if let Some(parent) = filename.parent() {
+                let subtitle: &str = &parent.to_string_lossy();
+                header_bar.set_subtitle(subtitle);
+            }
+
             text_view.get_buffer().unwrap().set_text(&contents);
             markdown_view.get_buffer().unwrap().set_text(&preview::render(&contents));
         }
@@ -90,14 +102,14 @@ fn build_ui(application: &gtk::Application) {
 
     text_view.connect_key_release_event(clone!(text_view, markdown_view, live_button => move |_, _| {
         if live_button.get_active() {
-            let markdown = buffer_to_string(text_view.get_buffer());
+            let markdown = buffer_to_string(text_view.get_buffer()).unwrap();
             markdown_view.get_buffer().unwrap().set_text(&preview::render(&markdown));
         }
         Inhibit(true)
     }));
 
     render_button.connect_clicked(clone!(text_view, markdown_view => move |_| {
-        let markdown = buffer_to_string(text_view.get_buffer());
+        let markdown = buffer_to_string(text_view.get_buffer()).unwrap();
         markdown_view.get_buffer().unwrap().set_text(&preview::render(&markdown));
     }));
 
@@ -116,14 +128,6 @@ fn build_ui(application: &gtk::Application) {
     }));
 
     window.show_all();
-}
-
-fn buffer_to_string(buffer: Option<TextBuffer>) -> String {
-    let buffer = buffer.unwrap();
-    let (start, end) = buffer.get_bounds();
-    let text = buffer.get_text(&start, &end, false);
-
-    text.unwrap()
 }
 
 fn main() {
