@@ -7,7 +7,6 @@ extern crate comrak;
 #[macro_use]
 extern crate horrorshow;
 
-mod state;
 mod preview;
 mod utils;
 
@@ -20,7 +19,7 @@ use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::Builder;
 
-use utils::{buffer_to_string, set_title};
+use utils::{buffer_to_string, set_title, configure_sourceview};
 
 const NAME: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -62,6 +61,9 @@ fn build_ui(application: &gtk::Application) {
     let about_button: gtk::ToolButton = builder.get_object("about_button").unwrap();
 
     let text_view: sourceview::View = builder.get_object("text_view").unwrap();
+    let text_buffer: sourceview::Buffer = builder.get_object("text_buffer").unwrap();
+    configure_sourceview(&text_buffer);
+
     let markdown_view: gtk::TextView = builder.get_object("markdown_view").unwrap();
 
     let file_chooser: gtk::FileChooserDialog = builder.get_object("file_chooser").unwrap();
@@ -76,7 +78,7 @@ fn build_ui(application: &gtk::Application) {
     about_dialog.set_authors(&[AUTHORS]);
     about_dialog.set_comments(DESCRIPTION);
 
-    open_button.connect_clicked(clone!(header_bar, text_view, markdown_view => move |_| {
+    open_button.connect_clicked(clone!(header_bar, text_buffer, markdown_view => move |_| {
         file_chooser.show();
 
         if file_chooser.run() == gtk::ResponseType::Ok.into() {
@@ -93,23 +95,23 @@ fn build_ui(application: &gtk::Application) {
                 header_bar.set_subtitle(subtitle);
             }
 
-            text_view.get_buffer().unwrap().set_text(&contents);
+            text_buffer.set_text(&contents);
             markdown_view.get_buffer().unwrap().set_text(&preview::render(&contents));
         }
 
         file_chooser.hide();
     }));
 
-    text_view.connect_key_release_event(clone!(text_view, markdown_view, live_button => move |_, _| {
+    text_view.connect_key_release_event(clone!(text_buffer, markdown_view, live_button => move |_, _| {
         if live_button.get_active() {
-            let markdown = buffer_to_string(text_view.get_buffer()).unwrap();
+            let markdown = buffer_to_string(&text_buffer).unwrap();
             markdown_view.get_buffer().unwrap().set_text(&preview::render(&markdown));
         }
         Inhibit(true)
     }));
 
-    render_button.connect_clicked(clone!(text_view, markdown_view => move |_| {
-        let markdown = buffer_to_string(text_view.get_buffer()).unwrap();
+    render_button.connect_clicked(clone!(text_buffer, markdown_view => move |_| {
+        let markdown = buffer_to_string(&text_buffer).unwrap();
         markdown_view.get_buffer().unwrap().set_text(&preview::render(&markdown));
     }));
 

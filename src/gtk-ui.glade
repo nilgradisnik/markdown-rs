@@ -41,6 +41,9 @@ Author: Nil Gradisnik
       <pattern>*.md</pattern>
     </patterns>
   </object>
+  <object class="GtkSourceBuffer" id="text_buffer">
+    <property name="max_undo_levels">0</property>
+  </object>
   <object class="GtkApplicationWindow" id="window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Markdown Rust</property>
@@ -72,6 +75,7 @@ Author: Nil Gradisnik
                     <property name="right_margin">2</property>
                     <property name="top_margin">2</property>
                     <property name="bottom_margin">2</property>
+                    <property name="buffer">text_buffer</property>
                     <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_WORD_COMPLETION | GTK_INPUT_HINT_NONE</property>
                     <property name="monospace">True</property>
                     <property name="show_line_marks">True</property>

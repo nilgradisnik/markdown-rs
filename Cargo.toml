@@ -15,8 +15,7 @@ horrorshow = "0.6"
 
 [dependencies.gtk]
 version = "0.3"
-default-features = false
-features = ["v3_22"]
+features = ["v3_20"]
 
 [dev-dependencies]
 clippy = "0.0.175"
