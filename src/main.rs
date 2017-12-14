@@ -53,8 +53,6 @@ fn build_ui(application: &gtk::Application) {
     header_bar.set_title(NAME);
 
     let open_button: gtk::ToolButton = builder.get_object("open_button").unwrap();
-    let render_button: gtk::ToolButton = builder.get_object("render_button").unwrap();
-    let live_button: gtk::ToggleToolButton = builder.get_object("live_button").unwrap();
     let about_button: gtk::ToolButton = builder.get_object("about_button").unwrap();
 
     let text_view: sourceview::View = builder.get_object("text_view").unwrap();
@@ -91,17 +89,10 @@ fn build_ui(application: &gtk::Application) {
         file_chooser.hide();
     }));
 
-    text_view.connect_key_release_event(clone!(text_buffer, markdown_view, live_button => move |_, _| {
-        if live_button.get_active() {
-            let markdown = buffer_to_string(&text_buffer).unwrap();
-            markdown_view.get_buffer().unwrap().set_text(&preview::render(&markdown));
-        }
-        Inhibit(true)
-    }));
-
-    render_button.connect_clicked(clone!(text_buffer, markdown_view => move |_| {
+    text_view.connect_key_release_event(clone!(text_buffer, markdown_view => move |_, _| {
         let markdown = buffer_to_string(&text_buffer).unwrap();
         markdown_view.get_buffer().unwrap().set_text(&preview::render(&markdown));
+        Inhibit(true)
     }));
 
     about_button.connect_clicked(clone!(about_dialog => move |_| {
