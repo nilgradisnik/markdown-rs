@@ -50,7 +50,9 @@ Author: Nil Gradisnik
     <property name="window_position">center</property>
     <property name="default_width">800</property>
     <property name="default_height">480</property>
+    <property name="icon_name">text-x-generic</property>
     <property name="has_resize_grip">True</property>
+    <property name="show_menubar">False</property>
     <child>
       <object class="GtkBox" id="v_box">
         <property name="visible">True</property>
@@ -142,19 +144,6 @@ Author: Nil Gradisnik
             <property name="use_underline">True</property>
             <property name="icon_name">document-open</property>
           </object>
-        </child>
-        <child>
-          <object class="GtkToolButton" id="about_button">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="tooltip_text" translatable="yes">About</property>
-            <property name="use_underline">True</property>
-            <property name="stock_id">gtk-about</property>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">3</property>
-          </packing>
         </child>
       </object>
     </child>

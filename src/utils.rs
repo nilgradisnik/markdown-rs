@@ -1,11 +1,10 @@
-
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 
 use gtk::*;
 use sourceview::*;
-use std::path::{PathBuf};
+use std::path::PathBuf;
 
 pub fn set_title(header_bar: &HeaderBar, path: &PathBuf) {
     if let Some(file_name) = path.file_name() {

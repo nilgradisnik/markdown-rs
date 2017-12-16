@@ -1,22 +1,23 @@
 // http://gtk-rs.org
 
+extern crate comrak;
 extern crate gio;
 extern crate gtk;
-extern crate sourceview;
-extern crate comrak;
 #[macro_use]
 extern crate horrorshow;
+extern crate sourceview;
 
 mod preview;
 mod utils;
 
-use std::env::args;
-
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::Builder;
+use gio::MenuExt;
 
-use utils::{buffer_to_string, open_file, set_title, configure_sourceview};
+use std::env::args;
+
+use utils::{buffer_to_string, configure_sourceview, open_file, set_title};
 
 const NAME: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -41,10 +42,36 @@ macro_rules! clone {
     );
 }
 
+fn build_system_menu(application: &gtk::Application) {
+    let menu = gio::Menu::new();
+
+    menu.append("About", "app.about");
+    menu.append("Quit", "app.quit");
+
+    application.set_app_menu(&menu);
+}
+
+fn add_actions(application: &gtk::Application, window: &gtk::ApplicationWindow, about_dialog: &gtk::AboutDialog) {
+    let quit = gio::SimpleAction::new("quit", None);
+    quit.connect_activate(clone!(window => move |_, _| {
+        window.destroy();
+    }));
+
+    let about = gio::SimpleAction::new("about", None);
+    about.connect_activate(clone!(about_dialog => move |_, _| {
+        about_dialog.show();
+    }));
+
+    application.add_action(&about);
+    application.add_action(&quit);
+}
+
 fn build_ui(application: &gtk::Application) {
     let glade_src = include_str!("gtk-ui.glade");
     let builder = Builder::new();
-    builder.add_from_string(glade_src).expect("Builder couldn't add from string");
+    builder
+        .add_from_string(glade_src)
+        .expect("Builder couldn't add from string");
 
     let window: gtk::ApplicationWindow = builder.get_object("window").expect("Couldn't get window");
     window.set_application(application);
@@ -53,7 +80,6 @@ fn build_ui(application: &gtk::Application) {
     header_bar.set_title(NAME);
 
     let open_button: gtk::ToolButton = builder.get_object("open_button").unwrap();
-    let about_button: gtk::ToolButton = builder.get_object("about_button").unwrap();
 
     let text_view: sourceview::View = builder.get_object("text_view").unwrap();
     let text_buffer: sourceview::Buffer = builder.get_object("text_buffer").unwrap();
@@ -95,10 +121,6 @@ fn build_ui(application: &gtk::Application) {
         Inhibit(true)
     }));
 
-    about_button.connect_clicked(clone!(about_dialog => move |_| {
-        about_dialog.show();
-    }));
-
     about_dialog.connect_delete_event(clone!(about_dialog => move |_, _| {
         about_dialog.hide();
         Inhibit(true)
@@ -109,12 +131,16 @@ fn build_ui(application: &gtk::Application) {
         Inhibit(false)
     }));
 
+    build_system_menu(application);
+    add_actions(application, &window, &about_dialog);
+
     window.show_all();
 }
 
 fn main() {
-    let application = gtk::Application::new("com.github.markdown-rs", gio::ApplicationFlags::empty())
-        .expect("Initialization failed...");
+    let application =
+        gtk::Application::new("com.github.markdown-rs", gio::ApplicationFlags::empty())
+            .expect("Initialization failed...");
 
     application.connect_startup(move |app| {
         build_ui(app);

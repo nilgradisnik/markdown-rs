@@ -1,4 +1,3 @@
-
 // https://github.com/Stebalien/horrorshow-rs
 use horrorshow::Raw;
 use horrorshow::helper::doctype;
