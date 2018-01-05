@@ -30,8 +30,8 @@ pub fn render(markdown: &str) -> String {
                         : Raw("hljs.initHighlightingOnLoad()")
                     }
                     style {
-                        : "body { width: 80%; margin: 0 auto }";
-                        : "img { max-width: 80% }"
+                        : "body { width: 90%; margin: 0 auto }";
+                        : "img { max-width: 90% }"
                     }
                 }
                 body {

@@ -6,6 +6,7 @@ extern crate gtk;
 #[macro_use]
 extern crate horrorshow;
 extern crate sourceview;
+extern crate webkit2gtk;
 
 mod preview;
 mod utils;
@@ -14,6 +15,8 @@ use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::Builder;
 use gio::MenuExt;
+
+use webkit2gtk::*;
 
 use std::env::args;
 
@@ -51,7 +54,11 @@ fn build_system_menu(application: &gtk::Application) {
     application.set_app_menu(&menu);
 }
 
-fn add_actions(application: &gtk::Application, window: &gtk::ApplicationWindow, about_dialog: &gtk::AboutDialog) {
+fn add_actions(
+    application: &gtk::Application,
+    window: &gtk::ApplicationWindow,
+    about_dialog: &gtk::AboutDialog,
+) {
     let quit = gio::SimpleAction::new("quit", None);
     quit.connect_activate(clone!(window => move |_, _| {
         window.destroy();
@@ -85,7 +92,10 @@ fn build_ui(application: &gtk::Application) {
     let text_buffer: sourceview::Buffer = builder.get_object("text_buffer").unwrap();
     configure_sourceview(&text_buffer);
 
-    let markdown_view: gtk::TextView = builder.get_object("markdown_view").unwrap();
+    let context = WebContext::get_default().unwrap();
+    let preview = WebView::new_with_context(&context);
+    let markdown_view: gtk::ScrolledWindow = builder.get_object("scrolled_window_right").unwrap();
+    markdown_view.add(&preview);
 
     let file_chooser: gtk::FileChooserDialog = builder.get_object("file_chooser").unwrap();
     file_chooser.add_buttons(&[
@@ -99,7 +109,7 @@ fn build_ui(application: &gtk::Application) {
     about_dialog.set_authors(&[AUTHORS]);
     about_dialog.set_comments(DESCRIPTION);
 
-    open_button.connect_clicked(clone!(header_bar, text_buffer, markdown_view => move |_| {
+    open_button.connect_clicked(clone!(header_bar, text_buffer, preview => move |_| {
         file_chooser.show();
 
         if file_chooser.run() == gtk::ResponseType::Ok.into() {
@@ -109,15 +119,15 @@ fn build_ui(application: &gtk::Application) {
             set_title(&header_bar, &filename);
 
             text_buffer.set_text(&contents);
-            markdown_view.get_buffer().unwrap().set_text(&preview::render(&contents));
+            preview.load_html(&preview::render(&contents), None);
         }
 
         file_chooser.hide();
     }));
 
-    text_view.connect_key_release_event(clone!(text_buffer, markdown_view => move |_, _| {
+    text_view.connect_key_release_event(clone!(text_buffer, preview => move |_, _| {
         let markdown = buffer_to_string(&text_buffer).unwrap();
-        markdown_view.get_buffer().unwrap().set_text(&preview::render(&markdown));
+        preview.load_html(&preview::render(&markdown), None);
         Inhibit(true)
     }));
 
