@@ -22,6 +22,7 @@ use webkit2gtk::*;
 use std::env::args;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use preview::Preview;
 use utils::{buffer_to_string, configure_sourceview, open_file, set_title};
 
 const NAME: &str = env!("CARGO_PKG_NAME");
@@ -111,9 +112,10 @@ fn build_ui(application: &gtk::Application) {
     about_dialog.set_authors(&[AUTHORS]);
     about_dialog.set_comments(DESCRIPTION);
 
-    text_buffer.connect_changed(clone!(web_view => move |buffer| {
+    let preview = Preview::new();
+    text_buffer.connect_changed(clone!(web_view, preview => move |buffer| {
         let markdown = buffer_to_string(buffer).unwrap();
-        web_view.load_html(&preview::render(&markdown), None);
+        web_view.load_html(&preview.render(&markdown), None);
     }));
 
     web_view.connect_decide_policy(clone!(window => move |view, decision, _| {
