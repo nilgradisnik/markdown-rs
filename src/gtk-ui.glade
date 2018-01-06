@@ -101,18 +101,7 @@ Author: Nil Gradisnik
                 <property name="shadow_type">in</property>
                 <property name="min_content_width">200</property>
                 <child>
-                  <object class="GtkTextView" id="markdown_view">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="editable">False</property>
-                    <property name="wrap_mode">word</property>
-                    <property name="left_margin">4</property>
-                    <property name="right_margin">4</property>
-                    <property name="top_margin">4</property>
-                    <property name="bottom_margin">4</property>
-                    <property name="indent">2</property>
-                    <property name="monospace">True</property>
-                  </object>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
