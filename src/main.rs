@@ -14,11 +14,13 @@ mod utils;
 use gio::prelude::*;
 use gtk::prelude::*;
 use gtk::Builder;
+use gtk::functions::show_uri_on_window;
 use gio::MenuExt;
 
 use webkit2gtk::*;
 
 use std::env::args;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use utils::{buffer_to_string, configure_sourceview, open_file, set_title};
 
@@ -114,12 +116,15 @@ fn build_ui(application: &gtk::Application) {
         web_view.load_html(&preview::render(&markdown), None);
     }));
 
-    web_view.connect_decide_policy(move |view, decision, _| {
-        if view.get_uri().unwrap() != "about:blank" {
+    web_view.connect_decide_policy(clone!(window => move |view, decision, _| {
+        let uri = view.get_uri().unwrap();
+        if uri != "about:blank" {
+            let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
+            show_uri_on_window(&window, &uri, timestamp.as_secs() as u32).unwrap();
             decision.ignore();
         }
         true
-    });
+    }));
     web_view.connect_load_failed(move |_, _, _, _| true);
 
     open_button.connect_clicked(clone!(header_bar, text_buffer => move |_| {
