@@ -88,14 +88,14 @@ fn build_ui(application: &gtk::Application) {
 
     let open_button: gtk::ToolButton = builder.get_object("open_button").unwrap();
 
-    let text_view: sourceview::View = builder.get_object("text_view").unwrap();
     let text_buffer: sourceview::Buffer = builder.get_object("text_buffer").unwrap();
     configure_sourceview(&text_buffer);
 
-    let context = WebContext::get_default().unwrap();
-    let preview = WebView::new_with_context(&context);
+    let web_context = WebContext::get_default().unwrap();
+    let web_view = WebView::new_with_context(&web_context);
+
     let markdown_view: gtk::ScrolledWindow = builder.get_object("scrolled_window_right").unwrap();
-    markdown_view.add(&preview);
+    markdown_view.add(&web_view);
 
     let file_chooser: gtk::FileChooserDialog = builder.get_object("file_chooser").unwrap();
     file_chooser.add_buttons(&[
@@ -109,26 +109,30 @@ fn build_ui(application: &gtk::Application) {
     about_dialog.set_authors(&[AUTHORS]);
     about_dialog.set_comments(DESCRIPTION);
 
-    open_button.connect_clicked(clone!(header_bar, text_buffer, preview => move |_| {
+    text_buffer.connect_changed(clone!(web_view => move |buffer| {
+        let markdown = buffer_to_string(buffer).unwrap();
+        web_view.load_html(&preview::render(&markdown), None);
+    }));
+
+    web_view.connect_decide_policy(move |view, decision, _| {
+        if view.get_uri().unwrap() != "about:blank" {
+            decision.ignore();
+        }
+        true
+    });
+    web_view.connect_load_failed(move |_, _, _, _| true);
+
+    open_button.connect_clicked(clone!(header_bar, text_buffer => move |_| {
         file_chooser.show();
 
         if file_chooser.run() == gtk::ResponseType::Ok.into() {
             let filename = file_chooser.get_filename().expect("Couldn't get filename");
             let contents = open_file(&filename);
-
             set_title(&header_bar, &filename);
-
             text_buffer.set_text(&contents);
-            preview.load_html(&preview::render(&contents), None);
         }
 
         file_chooser.hide();
-    }));
-
-    text_view.connect_key_release_event(clone!(text_buffer, preview => move |_, _| {
-        let markdown = buffer_to_string(&text_buffer).unwrap();
-        preview.load_html(&preview::render(&markdown), None);
-        Inhibit(true)
     }));
 
     about_dialog.connect_delete_event(clone!(about_dialog => move |_, _| {
