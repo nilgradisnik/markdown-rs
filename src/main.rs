@@ -9,6 +9,7 @@ extern crate sourceview;
 extern crate webkit2gtk;
 
 mod preview;
+#[macro_use]
 mod utils;
 
 use gio::prelude::*;
@@ -30,44 +31,23 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 
-// http://gtk-rs.org/tuto/closures
-macro_rules! clone {
-    (@param _) => ( _ );
-    (@param $x:ident) => ( $x );
-    ($($n:ident),+ => move || $body:expr) => (
-        {
-            $( let $n = $n.clone(); )+
-            move || $body
-        }
-    );
-    ($($n:ident),+ => move |$($p:tt),+| $body:expr) => (
-        {
-            $( let $n = $n.clone(); )+
-            move |$(clone!(@param $p),)+| $body
-        }
-    );
-}
-
-fn build_system_menu(application: &gtk::Application) {
+fn build_system_menu(
+    application: &gtk::Application,
+    window: &gtk::ApplicationWindow,
+    about_dialog: &gtk::AboutDialog,
+) {
     let menu = gio::Menu::new();
 
     menu.append("About", "app.about");
     menu.append("Quit", "app.quit");
 
     application.set_app_menu(&menu);
-}
 
-fn add_actions(
-    application: &gtk::Application,
-    window: &gtk::ApplicationWindow,
-    about_dialog: &gtk::AboutDialog,
-) {
     let quit = gio::SimpleAction::new("quit", None);
+    let about = gio::SimpleAction::new("about", None);
     quit.connect_activate(clone!(window => move |_, _| {
         window.destroy();
     }));
-
-    let about = gio::SimpleAction::new("about", None);
     about.connect_activate(clone!(about_dialog => move |_, _| {
         about_dialog.show();
     }));
@@ -134,26 +114,26 @@ fn build_ui(application: &gtk::Application) {
 
         if file_chooser.run() == gtk::ResponseType::Ok.into() {
             let filename = file_chooser.get_filename().expect("Couldn't get filename");
-            let contents = open_file(&filename);
             set_title(&header_bar, &filename);
+
+            let contents = open_file(&filename);
             text_buffer.set_text(&contents);
         }
 
         file_chooser.hide();
     }));
 
-    about_dialog.connect_delete_event(clone!(about_dialog => move |_, _| {
-        about_dialog.hide();
+    about_dialog.connect_delete_event(move |dialog, _| {
+        dialog.hide();
         Inhibit(true)
-    }));
+    });
 
-    window.connect_delete_event(clone!(window => move |_, _| {
-        window.destroy();
+    window.connect_delete_event(move |win, _| {
+        win.destroy();
         Inhibit(false)
-    }));
+    });
 
-    build_system_menu(application);
-    add_actions(application, &window, &about_dialog);
+    build_system_menu(application, &window, &about_dialog);
 
     window.show_all();
 }

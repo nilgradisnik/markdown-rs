@@ -132,6 +132,7 @@ Author: Nil Gradisnik
             <property name="label" translatable="yes">Open</property>
             <property name="use_underline">True</property>
             <property name="icon_name">document-open</property>
+            <accelerator key="o" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
           </object>
         </child>
       </object>
