@@ -8,15 +8,15 @@ readme = "README.md"
 license = "MIT"
 
 [dependencies]
-gio = "0.3"
-sourceview = "0.3"
+gio = "0.4"
+sourceview = "0.4"
 comrak = "0.2"
 horrorshow = "0.6"
-webkit2gtk = "0.3"
+webkit2gtk = "0.4"
 
 [dependencies.gtk]
-version = "0.3"
+version = "0.4"
 features = ["v3_22"]
 
 [dev-dependencies]
-clippy = "0.0.177"
+clippy = "0.0.192"

@@ -12,11 +12,11 @@ mod preview;
 #[macro_use]
 mod utils;
 
+use gio::MenuExt;
 use gio::prelude::*;
-use gtk::prelude::*;
 use gtk::Builder;
 use gtk::functions::show_uri_on_window;
-use gio::MenuExt;
+use gtk::prelude::*;
 
 use webkit2gtk::*;
 
