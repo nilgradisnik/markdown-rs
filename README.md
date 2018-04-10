@@ -16,12 +16,12 @@ This project depends on [gtk-rs](http://gtk-rs.org/docs-src/requirements.html), 
 
 - Ubuntu
 
-        sudo apt install libgtksourceview-3.0-dev libwebkit2gtk-4.0-dev
+        sudo apt install libgtk-3-dev libgtksourceview-3.0-dev libwebkit2gtk-4.0-dev
 
 
 - Fedora
 
-        sudo dnf install gtksourceview3-devel webkitgtk4-devel
+        sudo dnf install gtk3-devel glib2-devel gtksourceview3-devel webkitgtk4-devel
 
 
 Build and run
