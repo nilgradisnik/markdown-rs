@@ -24,7 +24,7 @@ use std::env::args;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use preview::Preview;
-use utils::{buffer_to_string, configure_sourceview, open_file, set_title};
+use utils::{buffer_to_string, configure_sourceview, open_file, save_file, set_title};
 
 const NAME: &str = env!("CARGO_PKG_NAME");
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -70,6 +70,7 @@ fn build_ui(application: &gtk::Application) {
     header_bar.set_title(NAME);
 
     let open_button: gtk::ToolButton = builder.get_object("open_button").unwrap();
+    let save_button: gtk::ToolButton = builder.get_object("save_button").unwrap();
 
     let text_buffer: sourceview::Buffer = builder.get_object("text_buffer").unwrap();
     configure_sourceview(&text_buffer);
@@ -80,11 +81,11 @@ fn build_ui(application: &gtk::Application) {
     let markdown_view: gtk::ScrolledWindow = builder.get_object("scrolled_window_right").unwrap();
     markdown_view.add(&web_view);
 
-    let file_chooser: gtk::FileChooserDialog = builder.get_object("file_chooser").unwrap();
-    file_chooser.add_buttons(&[
-        ("Open", gtk::ResponseType::Ok.into()),
-        ("Cancel", gtk::ResponseType::Cancel.into()),
-    ]);
+    let file_open: gtk::FileChooserDialog = builder.get_object("file_open").unwrap();
+    file_open.add_buttons(&[("Open", gtk::ResponseType::Ok.into()), ("Cancel", gtk::ResponseType::Cancel.into())]);
+
+    let file_save: gtk::FileChooserDialog = builder.get_object("file_save").unwrap();
+    file_save.add_buttons(&[("Save", gtk::ResponseType::Ok.into()), ("Cancel", gtk::ResponseType::Cancel.into())]);
 
     let about_dialog: gtk::AboutDialog = builder.get_object("about_dialog").unwrap();
     about_dialog.set_program_name(NAME);
@@ -109,18 +110,27 @@ fn build_ui(application: &gtk::Application) {
     }));
     web_view.connect_load_failed(move |_, _, _, _| true);
 
-    open_button.connect_clicked(clone!(header_bar, text_buffer => move |_| {
-        file_chooser.show();
-
-        if file_chooser.run() == gtk::ResponseType::Ok.into() {
-            let filename = file_chooser.get_filename().expect("Couldn't get filename");
+    open_button.connect_clicked(clone!(file_open, header_bar, text_buffer => move |_| {
+        file_open.show();
+        if file_open.run() == gtk::ResponseType::Ok.into() {
+            let filename = file_open.get_filename().expect("Couldn't get filename");
             set_title(&header_bar, &filename);
 
             let contents = open_file(&filename);
             text_buffer.set_text(&contents);
         }
+        file_open.hide();
+    }));
 
-        file_chooser.hide();
+    save_button.connect_clicked(clone!(file_save, text_buffer => move |_| {
+        file_save.show();
+        if file_save.run() == gtk::ResponseType::Ok.into() {
+            let filename = file_save.get_filename().expect("Couldn't get filename");
+            set_title(&header_bar, &filename);
+
+            save_file(&filename, &text_buffer);
+        }
+        file_save.hide();
     }));
 
     about_dialog.connect_delete_event(move |dialog, _| {
