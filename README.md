@@ -10,12 +10,20 @@ There seem to be no simple, fast Markdown editors on Linux.
 
 > Inspired by [uberwriter](http://uberwriter.wolfvollprecht.de/).
 
-## Development
+## Build from source
 
-Build:
+This project depends on [gtk-rs](http://gtk-rs.org/docs-src/requirements.html), [sourceview](https://github.com/gtk-rs/sourceview) and [webkit2gtk](https://github.com/gtk-rs/webkit2gtk-rs).
 
-    cargo build
+- Ubuntu
 
-Run:
+        sudo apt install libgtksourceview-3.0-dev libwebkit2gtk-4.0-dev
+
+
+- Fedora
+
+        sudo dnf install gtksourceview3-devel webkitgtk4-devel
+
+
+Build and run
 
     cargo run
