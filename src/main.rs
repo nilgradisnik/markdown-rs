@@ -114,10 +114,9 @@ fn build_ui(application: &gtk::Application) {
         file_open.show();
         if file_open.run() == gtk::ResponseType::Ok.into() {
             let filename = file_open.get_filename().expect("Couldn't get filename");
-            set_title(&header_bar, &filename);
 
-            let contents = open_file(&filename);
-            text_buffer.set_text(&contents);
+            set_title(&header_bar, &filename);
+            text_buffer.set_text(&open_file(&filename));
         }
         file_open.hide();
     }));
@@ -126,8 +125,8 @@ fn build_ui(application: &gtk::Application) {
         file_save.show();
         if file_save.run() == gtk::ResponseType::Ok.into() {
             let filename = file_save.get_filename().expect("Couldn't get filename");
-            set_title(&header_bar, &filename);
 
+            set_title(&header_bar, &filename);
             save_file(&filename, &text_buffer);
         }
         file_save.hide();
