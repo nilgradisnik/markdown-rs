@@ -33,6 +33,12 @@ pub fn open_file(filename: &PathBuf) -> String {
     contents
 }
 
+pub fn save_file(filename: &PathBuf, text_buffer: &Buffer) {
+    let contents = buffer_to_string(text_buffer).unwrap();
+    let mut file = File::create(filename).expect("Couldn't save file");
+    file.write_all(contents.as_bytes()).expect("File save failed");
+}
+
 pub fn configure_sourceview(buff: &Buffer) {
     LanguageManager::new()
         .get_language("markdown")
