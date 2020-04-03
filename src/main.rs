@@ -12,7 +12,6 @@ mod preview;
 #[macro_use]
 mod utils;
 
-use gio::MenuExt;
 use gio::prelude::*;
 use gtk::Builder;
 use gtk::functions::show_uri_on_window;
@@ -38,10 +37,10 @@ fn build_system_menu(
 ) {
     let menu = gio::Menu::new();
 
-    menu.append("About", "app.about");
-    menu.append("Quit", "app.quit");
+    menu.append(Some("About"), Some("app.about"));
+    menu.append(Some("Quit"), Some("app.quit"));
 
-    application.set_app_menu(&menu);
+    application.set_app_menu(Some(&menu));
 
     let quit = gio::SimpleAction::new("quit", None);
     let about = gio::SimpleAction::new("about", None);
@@ -64,10 +63,10 @@ fn build_ui(application: &gtk::Application) {
         .expect("Builder couldn't add from string");
 
     let window: gtk::ApplicationWindow = builder.get_object("window").expect("Couldn't get window");
-    window.set_application(application);
+    window.set_application(Some(application));
 
     let header_bar: gtk::HeaderBar = builder.get_object("header_bar").unwrap();
-    header_bar.set_title(NAME);
+    header_bar.set_title(Some(NAME));
 
     let open_button: gtk::ToolButton = builder.get_object("open_button").unwrap();
     let save_button: gtk::ToolButton = builder.get_object("save_button").unwrap();
@@ -89,13 +88,13 @@ fn build_ui(application: &gtk::Application) {
 
     let about_dialog: gtk::AboutDialog = builder.get_object("about_dialog").unwrap();
     about_dialog.set_program_name(NAME);
-    about_dialog.set_version(VERSION);
+    about_dialog.set_version(Some(VERSION));
     about_dialog.set_authors(&[AUTHORS]);
-    about_dialog.set_comments(DESCRIPTION);
+    about_dialog.set_comments(Some(DESCRIPTION));
 
     let preview = Preview::new();
     text_buffer.connect_changed(clone!(web_view, preview => move |buffer| {
-        let markdown = buffer_to_string(buffer).unwrap();
+        let markdown = buffer_to_string(buffer);
         web_view.load_html(&preview.render(&markdown), None);
     }));
 
@@ -103,7 +102,7 @@ fn build_ui(application: &gtk::Application) {
         let uri = view.get_uri().unwrap();
         if uri != "about:blank" {
             let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-            show_uri_on_window(&window, &uri, timestamp.as_secs() as u32).unwrap();
+            show_uri_on_window(Some(&window), &uri, timestamp.as_secs() as u32).unwrap();
             decision.ignore();
         }
         true
@@ -149,7 +148,7 @@ fn build_ui(application: &gtk::Application) {
 
 fn main() {
     let application =
-        gtk::Application::new("com.github.markdown-rs", gio::ApplicationFlags::empty())
+        gtk::Application::new(Some("com.github.markdown-rs"), gio::ApplicationFlags::empty())
             .expect("Initialization failed...");
 
     application.connect_startup(move |app| {

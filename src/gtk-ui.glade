@@ -85,7 +85,6 @@ Author: Nil Gradisnik
                     <property name="auto_indent">True</property>
                     <property name="insert_spaces_instead_of_tabs">True</property>
                     <property name="highlight_current_line">True</property>
-                    <property name="background_pattern">grid</property>
                   </object>
                 </child>
               </object>

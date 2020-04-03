@@ -1,6 +1,6 @@
 [package]
 name = "markdown-rs"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Nil Gradisnik <nil.gradisnik@gmail.com>"]
 description = "Fast, simple, distraction free Markdown editor."
 repository = "@nilgradisnik/markdown-rs"
@@ -8,15 +8,12 @@ readme = "README.md"
 license = "MIT"
 
 [dependencies]
-gio = "0.4"
-sourceview = "0.4"
-comrak = "0.2"
-horrorshow = "0.6"
-webkit2gtk = "0.4"
+gio = "0.8"
+sourceview = "0.8"
+comrak = "0.7"
+horrorshow = "0.8"
+webkit2gtk = "0.9"
 
 [dependencies.gtk]
-version = "0.4"
+version = "0.8"
 features = ["v3_22"]
-
-[dev-dependencies]
-clippy = "0.0.192"
