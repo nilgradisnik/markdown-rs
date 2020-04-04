@@ -27,3 +27,7 @@ This project depends on [gtk-rs](http://gtk-rs.org/docs-src/requirements.html), 
 Build and run
 
     cargo run
+
+## Packaging status
+
+Fedora/CentOS [COPR](https://copr.fedorainfracloud.org/coprs/atim/markdown-rs/): `sudo dnf copr enable atim/markdown-rs -y && sudo dnf install markdown-rs`
