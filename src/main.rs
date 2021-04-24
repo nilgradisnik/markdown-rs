@@ -45,7 +45,7 @@ fn build_system_menu(
     let quit = gio::SimpleAction::new("quit", None);
     let about = gio::SimpleAction::new("about", None);
     quit.connect_activate(clone!(window => move |_, _| {
-        window.destroy();
+        window.close();
     }));
     about.connect_activate(clone!(about_dialog => move |_, _| {
         about_dialog.show();
@@ -75,7 +75,7 @@ fn build_ui(application: &gtk::Application) {
     configure_sourceview(&text_buffer);
 
     let web_context = WebContext::get_default().unwrap();
-    let web_view = WebView::new_with_context(&web_context);
+    let web_view = WebView::with_context(&web_context);
 
     let markdown_view: gtk::ScrolledWindow = builder.get_object("scrolled_window_right").unwrap();
     markdown_view.add(&web_view);
@@ -137,7 +137,7 @@ fn build_ui(application: &gtk::Application) {
     });
 
     window.connect_delete_event(move |win, _| {
-        win.destroy();
+        win.close();
         Inhibit(false)
     });
 
