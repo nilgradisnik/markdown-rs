@@ -1,12 +1,11 @@
 use std::fs::File;
-use std::io::BufReader;
 use std::io::prelude::*;
+use std::io::BufReader;
+use std::path::Path;
 
-use gtk::*;
-use sourceview::*;
-use std::path::PathBuf;
+use gtk::{prelude::*, HeaderBar, TextBuffer};
 
-pub fn set_title(header_bar: &HeaderBar, path: &PathBuf) {
+pub fn set_title(header_bar: &HeaderBar, path: &Path) {
     if let Some(file_name) = path.file_name() {
         let file_name: &str = &file_name.to_string_lossy();
         header_bar.set_title(Some(file_name));
@@ -18,13 +17,16 @@ pub fn set_title(header_bar: &HeaderBar, path: &PathBuf) {
     }
 }
 
-pub fn buffer_to_string(buffer: &Buffer) -> String {
-    let (start, end) = buffer.get_bounds();
-    buffer.get_text(&start, &end, false).unwrap().to_string()
+pub fn buffer_to_string(buffer: &TextBuffer) -> String {
+    let (start, end) = buffer.bounds();
+    buffer
+        .text(&start, &end, false)
+        .unwrap_or_default()
+        .to_string()
 }
 
-pub fn open_file(filename: &PathBuf) -> String {
-    let file = File::open(&filename).expect("Couldn't open file");
+pub fn open_file(filename: &Path) -> String {
+    let file = File::open(filename).expect("Couldn't open file");
 
     let mut reader = BufReader::new(file);
     let mut contents = String::new();
@@ -33,37 +35,36 @@ pub fn open_file(filename: &PathBuf) -> String {
     contents
 }
 
-pub fn save_file(filename: &PathBuf, text_buffer: &Buffer) {
+pub fn save_file(filename: &Path, text_buffer: &TextBuffer) {
     let contents = buffer_to_string(text_buffer);
     let mut file = File::create(filename).expect("Couldn't save file");
-    file.write_all(contents.as_bytes()).expect("File save failed");
-}
-
-pub fn configure_sourceview(buff: &Buffer) {
-    LanguageManager::new()
-        .get_language("markdown")
-        .map(|markdown| buff.set_language(Some(&markdown)));
-
-    let manager = StyleSchemeManager::new();
-    manager
-        .get_scheme("classic")
-        .map(|theme| buff.set_style_scheme(Some(&theme)));
+    file.write_all(contents.as_bytes())
+        .expect("File save failed");
 }
 
 // http://gtk-rs.org/tuto/closures
 macro_rules! clone {
-    (@param _) => ( _ );
-    (@param $x:ident) => ( $x );
-    ($($n:ident),+ => move || $body:expr) => (
+    // Match `@strong` token and clone the variable
+    (@strong $($n:ident),+ => move || $body:expr) => {
         {
-            $( let $n = $n.clone(); )+
+            $(let $n = $n.clone();)+
             move || $body
         }
-    );
-    ($($n:ident),+ => move |$($p:tt),+| $body:expr) => (
+    };
+    (@strong $($n:ident),+ => move |$($p:pat_param),*| $body:expr) => {
         {
-            $( let $n = $n.clone(); )+
-            move |$(clone!(@param $p),)+| $body
+            $(let $n = $n.clone();)+
+            move |$($p),*| $body
         }
-    );
+    };
+    (@strong $($n:ident),+ => async move { $($body:tt)* }) => {
+        {
+            $(let $n = $n.clone();)+
+            async move { $($body)* }
+        }
+    };
+    // Fallback for other cases
+    ($($body:tt)*) => {
+        $($body)*
+    };
 }

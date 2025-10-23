@@ -1,5 +1,53 @@
-
+# Ignore the target directory
 /target/
-**/*.rs.bk
 
+# Ignore backup files
+**/*.rs.bk
 *.glade~
+
+# Ignore build artifacts
+**/*.d
+**/*.o
+**/*.so
+**/*.a
+**/*.lib
+
+# Ignore Cargo-specific files
+/.cargo
+/.rustup
+Cargo.lock
+
+# Ignore IDE/editor-specific files
+/.idea/
+/.vscode/
+/*.code-workspace
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.swo
+*.bak
+*.old
+
+# Ignore log files
+*.log
+
+# Ignore coverage files
+coverage/
+*.lcov
+
+# Ignore binary files
+*.exe
+*.dll
+*.dylib
+*.bin
+
+# Ignore Rust documentation
+/target/doc/
+
+# Ignore Rust build scripts output
+/target/debug/

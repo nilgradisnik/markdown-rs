@@ -62,6 +62,9 @@ Author: Nil Gradisnik
           <object class="GtkPaned">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="wide_handle">True</property>
+            <property name="orientation">horizontal</property>
+            <property name="margin">5</property>            
             <child>
               <object class="GtkScrolledWindow" id="scrolled_window_left">
                 <property name="visible">True</property>
@@ -85,6 +88,7 @@ Author: Nil Gradisnik
                     <property name="auto_indent">True</property>
                     <property name="insert_spaces_instead_of_tabs">True</property>
                     <property name="highlight_current_line">True</property>
+                    <property name="show_line_numbers">True</property>
                   </object>
                 </child>
               </object>
@@ -159,38 +163,29 @@ Author: Nil Gradisnik
     <property name="attached_to">window</property>
     <property name="program_name">Markdown Rust</property>
     <property name="version">0.1.0</property>
-    <property name="comments" translatable="yes">Fast, simple, distraction free Markdown editor.</property>
+    <property name="comments" translatable="yes">Fast, simple, distraction-free Markdown editor.</property>
     <property name="website">https://github.com/nilgradisnik/markdown-rs</property>
     <property name="website_label" translatable="yes">markdown-rs</property>
     <property name="authors">Nil Gradisnik &lt;nil.gradisnik@gmail.com&gt;</property>
     <property name="logo_icon_name">text-x-generic</property>
     <property name="license_type">mit-x11</property>
     <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
+        <object class="GtkBox">
             <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <placeholder/>
+            <property name="orientation">vertical</property>
+            <property name="spacing">2</property>
+            <child internal-child="action_area">
+                <object class="GtkButtonBox">
+                    <property name="can_focus">False</property>
+                    <property name="layout_style">end</property>
+                </object>
+                <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                </packing>
             </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
+        </object>
     </child>
     <child>
       <placeholder/>
